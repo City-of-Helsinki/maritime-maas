@@ -162,6 +162,7 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.BasicAuthentication",
         "rest_framework.authentication.SessionAuthentication",
     ],
+    "EXCEPTION_HANDLER": "bookings.exception_handler.exception_handler",
     "TEST_REQUEST_DEFAULT_FORMAT": "json",
 }
 
