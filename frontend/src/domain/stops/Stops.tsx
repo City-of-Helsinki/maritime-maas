@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Marker, Popup } from 'react-leaflet';
 
 import Map from '../../common/map/Map';
@@ -30,14 +30,14 @@ const Stops = () => {
 
   return (
     <div>
-      <h1>Stops</h1>
+      {/* <h1>Stops</h1>
       <form onSubmit={search} className={styles.form}>
         <label htmlFor="location">Location</label>
         <input name="location" className={styles.input} />
         <label htmlFor="radius">Radius</label>
         <input name="radius" className={styles.input} />
         <button type="submit">Search</button>
-      </form>
+      </form> */}
 
       <Map>
         {data?.map((stop: Stop) => (

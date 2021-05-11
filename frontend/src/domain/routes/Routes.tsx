@@ -1,6 +1,7 @@
 import React, { useState, Fragment } from 'react';
-import { Marker, Popup, GeoJSON, Polyline } from 'react-leaflet';
+import { Marker, Popup, GeoJSON, Polyline, Tooltip } from 'react-leaflet';
 import { LatLngExpression } from 'leaflet';
+import { useHistory } from 'react-router-dom';
 
 import { useRoutes } from '../hooks/api-hooks';
 import Map from '../../common/map/Map';
@@ -9,6 +10,7 @@ import styles from './routes.module.css';
 import { Route, Shape } from './types';
 
 const Routes = () => {
+  const history = useHistory();
   const [params, setParams] = useState<string>('');
   const { data, refetch } = useRoutes(params);
 
@@ -29,6 +31,7 @@ const Routes = () => {
   };
 
   const getColorForUUID = (uuid: string): string => {
+    console.log(uuid);
     return (
       '#' +
       (
@@ -44,12 +47,12 @@ const Routes = () => {
 
   return (
     <>
-      <h1>Routes</h1>
+      {/* <h1>Routes</h1>
       <form onSubmit={search} className={styles.form}>
         <label htmlFor="stop_id">Stop id</label>
         <input name="stop_id" className={styles.input} />
         <button type="submit">Search</button>
-      </form>
+      </form> */}
       <Map>
         {data?.map((route: Route) => (
           <Fragment key={route.name + route.id}>
@@ -62,8 +65,11 @@ const Routes = () => {
                 ]}
               >
                 <Popup>
-                  <p>{stop.id}</p>
-                  <p>{stop.name}</p>
+                  {/* <p>{stop.id}</p> */}
+                  <h3>{stop.name}</h3>
+                  {/* <p>
+                    <a href={`/routes/${route.id}`}>{route.name}</a>
+                  </p> */}
                 </Popup>
               </Marker>
             ))}
@@ -72,16 +78,26 @@ const Routes = () => {
                 <GeoJSON
                   key={shape.id}
                   data={shape.geometry}
-                  pathOptions={{
-                    color: getColorForUUID(shape.id),
+                  // onclick={alert('UGH')}
+                  onEachFeature={(feature, layer) => {
+                    layer.on('click', function (e) {
+                      history.push(`/routes/${route.id}`);
+                    });
                   }}
-                />
+                  pathOptions={{
+                    color: getColorForUUID(route.id),
+                  }}
+                >
+                  <Tooltip sticky>{route.name}</Tooltip>
+                </GeoJSON>
               ))
             ) : (
               <Polyline
                 positions={drawLine(route?.stops)}
                 pathOptions={{ color: 'black' }}
-              />
+              >
+                <Tooltip>{route.name}</Tooltip>
+              </Polyline>
             )}
           </Fragment>
         ))}

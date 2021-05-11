@@ -8,7 +8,7 @@ export type Shape = {
 };
 
 export type Route = {
-  id: number;
+  id: string;
   name: string;
   stops: Stop[];
   shapes: Shape[];

@@ -4,6 +4,7 @@ import { Switch, Route, BrowserRouter } from 'react-router-dom';
 
 import PageLayout from '../../common/layout/PageLayout';
 import Stops from '../stops/Stops';
+import Routeh from '../routes/Route';
 import Routes from '../routes/Routes';
 
 const queryClient = new QueryClient();
@@ -15,6 +16,7 @@ function App() {
         <PageLayout>
           <Switch>
             <Route exact component={Routes} path={['/', '/routes']} />
+            <Route exact component={Routeh} path={'/routes/:id'} />
             <Route exact component={Stops} path="/stops" />
           </Switch>
         </PageLayout>

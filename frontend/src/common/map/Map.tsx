@@ -13,7 +13,14 @@ const Map = ({ children }: Props) => {
 
   return (
     <div className={styles.container}>
-      <MapContainer center={center} zoom={8} className={styles.map}>
+      <MapContainer
+        center={center}
+        className={styles.map}
+        bounds={[
+          [60.17182560116401, 25.025220507762153],
+          [60.13050828775804, 24.89656552109463],
+        ]}
+      >
         <TileLayer
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
