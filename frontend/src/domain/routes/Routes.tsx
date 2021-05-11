@@ -45,6 +45,8 @@ const Routes = () => {
     );
   };
 
+  console.log(data);
+
   return (
     <>
       {/* <h1>Routes</h1>
@@ -85,7 +87,7 @@ const Routes = () => {
                     });
                   }}
                   pathOptions={{
-                    color: getColorForUUID(route.id),
+                    color: getColorForUUID(route?.agency?.name),
                   }}
                 >
                   <Tooltip sticky>{route.name}</Tooltip>

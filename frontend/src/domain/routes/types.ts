@@ -12,4 +12,7 @@ export type Route = {
   name: string;
   stops: Stop[];
   shapes: Shape[];
+  agency: {
+    name: string;
+  };
 };
