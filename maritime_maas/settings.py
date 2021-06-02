@@ -3,6 +3,7 @@ import subprocess
 
 import environ
 import sentry_sdk
+from django.utils.translation import gettext_lazy as _
 from sentry_sdk.integrations.django import DjangoIntegration
 
 checkout_dir = environ.Path(__file__) - 2
@@ -120,6 +121,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "corsheaders",
     "parler",
+    "drf_spectacular",
     # local apps
     "utils",
     "gtfs",
@@ -159,10 +161,26 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ["maas.permissions.IsMaasOperator"],
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "maas.authentication.BearerTokenAuthentication",
-        "rest_framework.authentication.BasicAuthentication",
-        "rest_framework.authentication.SessionAuthentication",
     ],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "EXCEPTION_HANDLER": "bookings.exception_handler.exception_handler",
     "TEST_REQUEST_DEFAULT_FORMAT": "json",
+}
+if DEBUG:
+    REST_FRAMEWORK["DEFAULT_AUTHENTICATION_CLASSES"].append(
+        "rest_framework.authentication.SessionAuthentication"
+    )
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": _("Maritime MaaS API"),
+    "DESCRIPTION": _(
+        "Integration layer that mediates the connection between ticket sales platforms and MaaS providers."
+    ),
+    "VERSION": "1.0.0",
+    "EXTERNAL_DOCS": {
+        "url": "https://github.com/City-of-Helsinki/maritime-maas/",
+        "description": _("Source code"),
+    },
 }
 
 CORS_ORIGIN_WHITELIST = env.list("CORS_ORIGIN_WHITELIST")
