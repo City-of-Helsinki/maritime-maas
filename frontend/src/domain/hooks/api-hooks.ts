@@ -43,7 +43,6 @@ export const buyTicketsApi = async (params: any) => {
     ...params,
     request_id: 123,
     transaction_id: 123,
-    locale: 'en',
   });
   console.log(reservation);
   const confirm = await axiosInstance.post(
@@ -51,7 +50,7 @@ export const buyTicketsApi = async (params: any) => {
     {
       request_id: 123,
       transaction_id: 123,
-      locale: 'en',
+      locale: params['locale'],
     }
   );
   console.log(confirm);

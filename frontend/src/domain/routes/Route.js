@@ -32,9 +32,9 @@ const Ticket = (props) => (
       }}
     >
       <img style={{ maxHeight: '70px' }} src={props.ticket.agency.logo_url} />
-      <div style={{ flex: '100%' }}>
+      {/* <div style={{ flex: '100%' }}>
         <h3 style={{ textAlign: 'center' }}>{props.ticket.agency.name}</h3>
-      </div>
+      </div> */}
     </div>
     <hr />
     <div className="routeHeader">
@@ -71,7 +71,7 @@ const Ticket = (props) => (
               {l.stops.map((s) => {
                 return (
                   <tr>
-                    <td>{format(new Date(s.stop_time), 'hh:mm')}</td>
+                    <td>{format(new Date(s.stop_time), 'HH:mm')}</td>
                     <td>{s.name}</td>
                   </tr>
                 );
@@ -83,15 +83,23 @@ const Ticket = (props) => (
     </div>
     <h5>Lipun kuvaus</h5>
     <p>{props.ticket.ticket_type.description}</p>
-    {props.ticket.ticket_type.instructions && (
+    {/* {props.ticket.ticket_type.instructions && (
+      <> */}
+    {props.ticket.ticket_type.instructions ? (
       <>
         <h5>Lipun ohjeet</h5>
-        <p>{props.ticket.ticket_type.intructions}</p>
+        <p>{props.ticket.ticket_type.instructions}</p>
       </>
-    )}
+    ) : null}
+    {/* </>
+    )} */}
 
-    <h5>Asiakasryhmän kuvaus</h5>
-    <p>{props.ticket.customer_type.description}</p>
+    {props.ticket.customer_type.description ? (
+      <>
+        <h5>Asiakasryhmän kuvaus</h5>
+        <p>{props.ticket.customer_type.description}</p>
+      </>
+    ) : null}
   </div>
 );
 
@@ -156,100 +164,104 @@ const Routeh = () => {
         });
       })
       .flat();
-    const params = {
+    let params = {
       route_id: data.route.id,
       tickets: ticketArray,
+      locale: 'fi',
     };
+    if (departures.length > 0) {
+      params['departure_ids'] = departures.map((d) => d[0].id);
+    }
     let book = await buyTicketsApi(params);
-    const ticketData = [
-      {
-        id: '5d1864c8-7996-45ec-8823-914412c00ca2',
-        agency: {
-          name: 'Suomen saaristokuljetus Oy',
-          logo_url: 'https://kauppa.visitvallisaari.fi/img/logo.png',
-        },
-        customer_type: {
-          description: 'Aikuiset',
-          name: 'Aikuiset',
-        },
-        locale: 'fi',
-        maas_operator_id: 'maasmies',
-        price: {
-          amount_excluding_vat: '6.85',
-          amount_total: '8.49',
-          currency: 'EUR',
-          vat_amount: '1.64',
-          vat_percentage: '24',
-        },
-        qr_code:
-          'data:image/png;base64,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',
-        route: {
-          name: 'Kauppatori - Vallisaari',
-          description:
-            'Matka Kauppatorilta Vallisaareen ja takaisin. Lippuun sisältyy rajaton ajelu Vallisaaren rengasreitillä',
-          legs: [
-            {
-              stops: [
-                {
-                  location: {
-                    lat: 60.1665471,
-                    lon: 24.9538016,
-                  },
-                  name: 'Kauppatori Lyypekinlaituri',
-                  stop_time: '2021-05-01T05:00:00Z',
-                },
-                {
-                  location: {
-                    lat: 60.1405804,
-                    lon: 25.007042,
-                  },
-                  name: 'Vallisaari tulolaituri',
-                  stop_time: '2021-05-01T05:20:00Z',
-                },
-              ],
-            },
-            {
-              stops: [
-                {
-                  location: {
-                    lat: 60.1376346,
-                    lon: 25.0098517,
-                  },
-                  name: 'Vallisaari lähtölaituri',
-                  stop_time: '2021-05-01T06:25:00Z',
-                },
-                {
-                  location: {
-                    lat: 60.1665471,
-                    lon: 24.9538016,
-                  },
-                  name: 'Kauppatori Lyypekinlaituri',
-                  stop_time: '2021-05-01T06:45:00Z',
-                },
-              ],
-            },
-          ],
-        },
-        terms_url: '',
-        departures: [
-          {
-            from: 'Kauppatori Lyypekinlaituri',
-            to: 'Vallisaari tulolaituri',
-            depart_at: '2021-05-11T14:42:47.712273Z',
-          },
-        ],
-        schema_version: 2,
-        ticket_type: {
-          name: 'Menu-Paluu',
-          description: 'Menu-Paluu',
-          instructions: '',
-        },
-        validity: {
-          starts_at: '2021-05-11T13:42:47.712273Z',
-        },
-      },
-    ];
-    setBooking({ ...book, tickets: ticketData });
+    // const ticketData = [
+    //   {
+    //     id: '5d1864c8-7996-45ec-8823-914412c00ca2',
+    //     agency: {
+    //       name: 'Suomen saaristokuljetus Oy',
+    //       logo_url: 'https://kauppa.visitvallisaari.fi/img/logo.png',
+    //     },
+    //     customer_type: {
+    //       description: 'Aikuiset',
+    //       name: 'Aikuiset',
+    //     },
+    //     locale: 'fi',
+    //     maas_operator_id: 'maasmies',
+    //     price: {
+    //       amount_excluding_vat: '6.85',
+    //       amount_total: '8.49',
+    //       currency: 'EUR',
+    //       vat_amount: '1.64',
+    //       vat_percentage: '24',
+    //     },
+    //     qr_code:
+    //       'data:image/png;base64,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',
+    //     route: {
+    //       name: 'Kauppatori - Vallisaari',
+    //       description:
+    //         'Matka Kauppatorilta Vallisaareen ja takaisin. Lippuun sisältyy rajaton ajelu Vallisaaren rengasreitillä',
+    //       legs: [
+    //         {
+    //           stops: [
+    //             {
+    //               location: {
+    //                 lat: 60.1665471,
+    //                 lon: 24.9538016,
+    //               },
+    //               name: 'Kauppatori Lyypekinlaituri',
+    //               stop_time: '2021-05-01T05:00:00Z',
+    //             },
+    //             {
+    //               location: {
+    //                 lat: 60.1405804,
+    //                 lon: 25.007042,
+    //               },
+    //               name: 'Vallisaari tulolaituri',
+    //               stop_time: '2021-05-01T05:20:00Z',
+    //             },
+    //           ],
+    //         },
+    //         {
+    //           stops: [
+    //             {
+    //               location: {
+    //                 lat: 60.1376346,
+    //                 lon: 25.0098517,
+    //               },
+    //               name: 'Vallisaari lähtölaituri',
+    //               stop_time: '2021-05-01T06:25:00Z',
+    //             },
+    //             {
+    //               location: {
+    //                 lat: 60.1665471,
+    //                 lon: 24.9538016,
+    //               },
+    //               name: 'Kauppatori Lyypekinlaituri',
+    //               stop_time: '2021-05-01T06:45:00Z',
+    //             },
+    //           ],
+    //         },
+    //       ],
+    //     },
+    //     terms_url: '',
+    //     departures: [
+    //       {
+    //         from: 'Kauppatori Lyypekinlaituri',
+    //         to: 'Vallisaari tulolaituri',
+    //         depart_at: '2021-05-11T14:42:47.712273Z',
+    //       },
+    //     ],
+    //     schema_version: 2,
+    //     ticket_type: {
+    //       name: 'Menu-Paluu',
+    //       description: 'Menu-Paluu',
+    //       instructions: '',
+    //     },
+    //     validity: {
+    //       starts_at: '2021-05-11T13:42:47.712273Z',
+    //     },
+    //   },
+    // ];
+    setBooking(book);
   };
 
   // 	"route_id": "14cd1f76-57a6-5afa-9d88-54df4abad577",
@@ -395,16 +407,55 @@ const Routeh = () => {
           )}
         </div>
       )}
-      {data?.route?.capacity_sales < 2 ||
-        (departures.length == legCount && (
-          <button className="button" onClick={buyTickets}>
-            Osta liput
-          </button>
-        ))}
+      {selectDepartures && departures.length == legCount && (
+        <>
+          <h3>Valitut lähdöt</h3>
+          <div style={{ display: 'flex', marginBottom: '20px' }}>
+            {departures.map((d, i) => {
+              const divider =
+                i > 0 ? (
+                  <div
+                    style={{
+                      borderLeft: '4px solid black',
+                      height: 'inherit',
+                      minHeight: '100%',
+                      width: '6px',
+                    }}
+                  />
+                ) : null;
+              return (
+                <>
+                  {divider}
+                  <table style={{ flex: '50%' }}>
+                    <tbody>
+                      {d.map((s) => {
+                        return (
+                          <tr>
+                            <td>
+                              {format(new Date(s.departure_time), 'HH:mm')}
+                            </td>
+                            <td>{s.stop_name}</td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </>
+              );
+            })}
+          </div>
+        </>
+      )}
+      {(data?.route?.capacity_sales < 2 || departures.length == legCount) && (
+        <button className="button" onClick={buyTickets}>
+          Osta liput
+        </button>
+      )}
       {!selectDepartures &&
         data?.route?.capacity_sales > 1 &&
         departures.length < legCount && (
           <button
+            style={{ margin: '20px 0' }}
             className="button"
             onClick={() => {
               setSelectDepartures(true);
