@@ -56,6 +56,13 @@ class RouteSerializer(serializers.ModelSerializer):
     ticket_types = serializers.SerializerMethodField()
     description = serializers.CharField(source="desc")
 
+    @staticmethod
+    def setup_eager_loading(queryset):
+        """ Perform necessary eager loading of data. """
+        print("1")
+        queryset = queryset.prefetch_related('trips__stop_times__stop')
+        return queryset
+
     @extend_schema_field(StopSerializer(many=True))
     def get_stops(self, obj):
         stops = (
@@ -102,3 +109,8 @@ class RoutesViewSet(BaseGTFSViewSet):
     filter_backends = [filters.DjangoFilterBackend]
     filterset_class = RouteFilter
     detail_query_params_serializer_class = NestedDepartureQueryParamsSerializer
+
+    def get_queryset(self):
+        queryset = Route.objects.all()
+        queryset = self.get_serializer_class().setup_eager_loading(queryset)  
+        return queryset    

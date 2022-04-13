@@ -110,18 +110,19 @@ class StopSerializer(serializers.ModelSerializer):
     def get_departures(self, obj):
         if "date" not in self.context:
             return None
-
+        from datetime import datetime
+        print(datetime.now())
         queryset = (
             StopTime.objects.filter(
                 stop=obj, trip__departures__date=self.context["date"]
             )
-            .select_related("trip", "trip__route", "trip__route__agency")
-            .prefetch_related(
+            .select_related("trip", "trip__route", "trip__route__agency", "stop")
+                .prefetch_related("trip__translations",
                 Prefetch(
                     "trip__departures",
                     queryset=Departure.objects.filter(
                         date=self.context["date"], trip__stop_times__stop=obj
-                    ),
+                    ).select_related("trip").prefetch_related("trip__translations"),
                     to_attr="dates_departure",
                 )
             )
