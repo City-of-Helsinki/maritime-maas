@@ -1,19 +1,26 @@
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers, viewsets
 from rest_framework.exceptions import ParseError
+from rest_framework.permissions import AllowAny
 
 
 class BaseGTFSViewSet(viewsets.ReadOnlyModelViewSet):
     lookup_field = "api_id"
+    permission_classes = (AllowAny,)
 
     # if set, query params given to the detail endpoint will be serialized by this
     # serializer and added to the context of the ViewSet's main serializer
     detail_query_params_serializer_class = None
 
     def get_queryset(self):
-        maas_operator = self.request.user.maas_operator
         qs = super().get_queryset()
-        return qs.for_maas_operator(maas_operator)
+        if (
+            self.request.user.is_authenticated
+            and hasattr(self.request.user, "maas_operator")
+            and (maas_operator := self.request.user.maas_operator)
+        ):
+            qs = qs.for_maas_operator(maas_operator)
+        return qs
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
