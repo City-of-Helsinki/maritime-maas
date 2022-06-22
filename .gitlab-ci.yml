@@ -64,10 +64,6 @@ workflow:
     - 'eval export TEST_IMG=$IMAGE_TEST_TAG'
     - 'eval docker pull $TEST_IMG'
     - docker-compose -f docker-compose.yml -f docker-compose.test.override.yml run --rm --name unittest django
-  artifacts:
-    reports:
-      cobertura: coverage.xml
-
 
 #####
 ## WORKFLOW_FEATURES: Build image
