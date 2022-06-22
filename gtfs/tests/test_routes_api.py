@@ -19,8 +19,18 @@ ENDPOINT = "/v1/routes/"
 
 
 @pytest.mark.django_db
-def test_routes(maas_api_client, route_with_departures, snapshot):
-    response = maas_api_client.get(ENDPOINT)
+@pytest.mark.parametrize(
+    "filters",
+    (
+        {"api_client": "maas_unauthenticated_api_client"},
+        {"api_client": "maas_api_client"},
+    ),
+)
+def test_routes(
+    request, route_with_departures, snapshot, filters, stops_from_second_tsp
+):
+    api_client = request.getfixturevalue(filters["api_client"])
+    response = api_client.get(ENDPOINT)
     assert response.status_code == 200
 
     content = json.loads(response.content)

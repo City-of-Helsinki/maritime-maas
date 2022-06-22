@@ -6,7 +6,38 @@ from snapshottest import Snapshot
 
 snapshots = Snapshot()
 
-snapshots["test_stops 1"] = [
+snapshots["test_stops[filters0] 1"] = [
+    {
+        "description": "desc of test stop ",
+        "id": "00000000-0000-0000-0000-000000000001",
+        "name": "stop ",
+        "tts_name": "tts_name of stop ",
+        "wheelchair_boarding": 0,
+    },
+    {
+        "description": "desc of test stop ",
+        "id": "00000000-0000-0000-0000-000000000002",
+        "name": "stop ",
+        "tts_name": "tts_name of stop ",
+        "wheelchair_boarding": 0,
+    },
+    {
+        "description": "desc of test stop ",
+        "id": "00000000-0000-0000-0000-000000000007",
+        "name": "stop ",
+        "tts_name": "tts_name of stop ",
+        "wheelchair_boarding": 0,
+    },
+    {
+        "description": "desc of test stop ",
+        "id": "00000000-0000-0000-0000-000000000008",
+        "name": "stop ",
+        "tts_name": "tts_name of stop ",
+        "wheelchair_boarding": 0,
+    },
+]
+
+snapshots["test_stops[filters1] 1"] = [
     {
         "description": "desc of test stop ",
         "id": "00000000-0000-0000-0000-000000000001",

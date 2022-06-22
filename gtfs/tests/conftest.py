@@ -22,10 +22,25 @@ def maas_operator():
 
 
 @pytest.fixture
+def second_maas_operator():
+    return baker.make(
+        MaasOperator,
+        name=seq("name of maas operator 2"),
+        identifier=seq("identifier of maas operator 2"),
+    )
+
+
+@pytest.fixture
 def maas_api_client(maas_operator):
     api_client = APIClient()
     token_authenticate(api_client, maas_operator.user)
     api_client.maas_operator = maas_operator
+    return api_client
+
+
+@pytest.fixture
+def maas_unauthenticated_api_client():
+    api_client = APIClient()
     return api_client
 
 
@@ -60,6 +75,55 @@ def route_for_maas_operator(maas_operator, api_id_generator):
     )
 
     return route
+
+
+@pytest.fixture
+def route_for_second_tsp(second_maas_operator, api_id_generator):
+    feed = get_feed_for_maas_operator(maas_operator, False)
+
+    agency = baker.make(
+        Agency,
+        feed=feed,
+        name="test agency 2",
+        url="www.testagency.com",
+        logo_url="www.testagency.com/logo",
+        timezone="Europe/Helsinki",
+        email="test-agency@example.com",
+        phone="777777",
+    )
+
+    route = baker.make(
+        Route,
+        feed=feed,
+        api_id=api_id_generator,
+        agency=agency,
+        desc="desc of test route 2",
+        url="url of test route 2",
+        capacity_sales=Route.CapacitySales.DISABLED,
+    )
+
+    return route
+
+
+@pytest.fixture
+def stops_from_second_tsp(api_id_generator, route_for_second_tsp):
+    """
+    A route with 2 stops
+    """
+    feed = route_for_second_tsp.feed
+
+    stops = baker.make(
+        Stop,
+        feed=feed,
+        api_id=api_id_generator,
+        name="stop ",
+        tts_name="tts_name of stop ",
+        code=seq("code of stop"),
+        desc="desc of test stop ",
+        _quantity=2,
+    )
+
+    return stops
 
 
 @pytest.fixture

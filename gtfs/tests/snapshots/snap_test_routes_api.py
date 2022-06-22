@@ -72,6 +72,90 @@ snapshots["test_routes 1"] = [
     }
 ]
 
+snapshots["test_routes[filters0] 1"] = [
+    {
+        "agency": {
+            "email": "test-agency@example.com",
+            "logo_url": "www.testagency.com/logo",
+            "name": "test agency",
+            "phone": "777777",
+            "url": "www.testagency.com",
+        },
+        "capacity_sales": 0,
+        "description": "desc of test route ",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "name": "",
+        "stops": [
+            {
+                "description": "desc of test stop ",
+                "id": "00000000-0000-0000-0000-000000000001",
+                "name": "stop ",
+                "tts_name": "tts_name of stop ",
+                "wheelchair_boarding": 0,
+            },
+            {
+                "description": "desc of test stop ",
+                "id": "00000000-0000-0000-0000-000000000002",
+                "name": "stop ",
+                "tts_name": "tts_name of stop ",
+                "wheelchair_boarding": 0,
+            },
+        ],
+        "ticket_types": [],
+        "url": "url of test route ",
+    },
+    {
+        "agency": {
+            "email": "test-agency@example.com",
+            "logo_url": "www.testagency.com/logo",
+            "name": "test agency 2",
+            "phone": "777777",
+            "url": "www.testagency.com",
+        },
+        "capacity_sales": 0,
+        "description": "desc of test route 2",
+        "id": "00000000-0000-0000-0000-000000000006",
+        "name": "",
+        "stops": [],
+        "ticket_types": [],
+        "url": "url of test route 2",
+    },
+]
+
+snapshots["test_routes[filters1] 1"] = [
+    {
+        "agency": {
+            "email": "test-agency@example.com",
+            "logo_url": "www.testagency.com/logo",
+            "name": "test agency",
+            "phone": "777777",
+            "url": "www.testagency.com",
+        },
+        "capacity_sales": 0,
+        "description": "desc of test route ",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "name": "",
+        "stops": [
+            {
+                "description": "desc of test stop ",
+                "id": "00000000-0000-0000-0000-000000000001",
+                "name": "stop ",
+                "tts_name": "tts_name of stop ",
+                "wheelchair_boarding": 0,
+            },
+            {
+                "description": "desc of test stop ",
+                "id": "00000000-0000-0000-0000-000000000002",
+                "name": "stop ",
+                "tts_name": "tts_name of stop ",
+                "wheelchair_boarding": 0,
+            },
+        ],
+        "ticket_types": [],
+        "url": "url of test route ",
+    }
+]
+
 snapshots["test_routes_departures[filters2] 1"] = [
     {
         "arrival_time": "2021-02-18T13:00:00Z",
