@@ -7,6 +7,7 @@ from requests import RequestException
 from gtfs.importers import GTFSFeedImporter
 from gtfs.importers.gtfs_feed_importer import GTFSFeedImporterError
 from gtfs.importers.gtfs_feed_reader import GTFSFeedReader
+from gtfs.importers.utils import get_traceback
 from gtfs.models import Feed
 
 
@@ -43,9 +44,10 @@ class GTFSFeedUpdater:
             # catch everything so that even for bugs the feed's last import status is
             # correctly set to unsuccessful
             except Exception as e:  # noqa
-                feed.last_import_error_message = str(e)
+                exception_traceback = get_traceback(e)
+                feed.last_import_error_message = exception_traceback
                 feed.import_attempted_at = timezone.now()
-                exception = e
+                exception = GTFSFeedImporterError(exception_traceback)
             else:
                 feed.last_import_error_message = ""
                 if imported:
