@@ -17,13 +17,15 @@ class GTFSFeedUpdater:
         self.importer = GTFSFeedImporter()
         self.reader = GTFSFeedReader()
 
-    def update_feeds(self, force: bool = False):
+    def update_feeds(self, force: bool = False, raise_exception: bool = False):
         self.logger.info("Importing feeds...")
         for feed in Feed.objects.all():
             try:
                 self.update_single_feed(feed, force=force)
-            except (RequestException, GTFSFeedImporterError):
+            except (RequestException, GTFSFeedImporterError) as e:
                 self.logger.exception(f'Failed to update feed: "{feed.name}"')
+                if raise_exception:
+                    raise e
         self.logger.info("Importing feeds done")
 
     def update_single_feed(
