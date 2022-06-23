@@ -5,6 +5,7 @@ import pytest
 from django.utils.timezone import localdate
 
 from gtfs.importers import GTFSFeedImporter, GTFSFeedUpdater
+from gtfs.importers.gtfs_feed_importer import GTFSFeedImporterError
 from gtfs.models import (
     Agency,
     Fare,
@@ -166,3 +167,17 @@ def test_feed_updater():
     feed.refresh_from_db()
     assert feed.imported_at and feed.imported_at == feed.import_attempted_at
     assert feed.last_import_successful
+
+
+@pytest.mark.django_db
+def test_feed_updater_failure_path_exception():
+    feed = Feed.objects.create(url_or_path="gtfs/tests/data/gtfs_wrong_path")
+    importer = GTFSFeedUpdater()
+
+    with pytest.raises(GTFSFeedImporterError) as exc_info:
+        importer.update_feeds(raise_exception=True)
+
+    assert "Invalid URL 'gtfs/tests/data/gtfs_wrong_path'" in str(exc_info.value)
+    feed.refresh_from_db()
+    assert feed.import_attempted_at is not None
+    assert len(feed.last_import_error_message) > 0
