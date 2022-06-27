@@ -21,13 +21,19 @@ ENDPOINT = "/v1/bookings/"
 def booking_post_data(fare_test_data):
     return {
         "transaction_id": "transactionID",
+        "locale": "fi",
         "departure_ids": [fare_test_data.departures[0].api_id],
         "tickets": [
             {
                 "customer_type_id": fare_test_data.rider_categories[0].api_id,
+                "customer_type_name": fare_test_data.rider_categories[0].name,
                 "ticket_type_id": fare_test_data.fares[0].api_id,
+                "ticket_type_name": fare_test_data.fares[0].name,
             }
         ],
+        "agency": {
+            "name": "Test agency"
+        }
     }
 
 
@@ -55,6 +61,12 @@ def test_create_booking(
     assert booking.transaction_id == "transactionID"
     assert booking.ticket_count == 1
     assert booking.route_name == fare_test_data.routes[0].long_name
+    assert booking.locale == booking_post_data["locale"]
+    assert booking.agency_name == booking_post_data["agency"]["name"]
+    tickets = booking.tickets.all()
+    assert tickets.count() == len(booking_post_data["tickets"])
+    assert tickets[0].customer_type_name == booking_post_data["tickets"][0]["customer_type_name"]
+    assert tickets[0].ticket_type_name == booking_post_data["tickets"][0]["ticket_type_name"]
 
 
 @pytest.mark.django_db

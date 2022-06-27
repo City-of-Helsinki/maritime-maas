@@ -62,6 +62,7 @@ class BookingSerializer(PassthroughParametersSerializer, serializers.ModelSerial
     locale = serializers.ChoiceField(
         choices=settings.TICKET_LANGUAGES, required=False, write_only=True
     )
+    agency = serializers.DictField(write_only=True)
     id = serializers.UUIDField(source="api_id", read_only=True)
 
     class Meta:
@@ -75,6 +76,7 @@ class BookingSerializer(PassthroughParametersSerializer, serializers.ModelSerial
             "status",
             "request_id",
             "transaction_id",
+            "agency"
         )
         read_only_fields = ("id", "status")
 
