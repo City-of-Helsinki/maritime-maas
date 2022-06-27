@@ -4,6 +4,7 @@ import uuid
 from urllib.parse import urljoin
 
 import pytest
+from django.utils import timezone
 from freezegun import freeze_time
 from model_bakery import baker, seq
 from rest_framework import status
@@ -31,9 +32,6 @@ def booking_post_data(fare_test_data):
                 "ticket_type_name": fare_test_data.fares[0].name,
             }
         ],
-        "agency": {
-            "name": "Test agency"
-        }
     }
 
 
@@ -62,11 +60,13 @@ def test_create_booking(
     assert booking.ticket_count == 1
     assert booking.route_name == fare_test_data.routes[0].long_name
     assert booking.locale == booking_post_data["locale"]
-    assert booking.agency_name == booking_post_data["agency"]["name"]
+    assert booking.agency_name == fare_test_data.routes[0].agency.name
     tickets = booking.tickets.all()
     assert tickets.count() == len(booking_post_data["tickets"])
     assert tickets[0].customer_type_name == booking_post_data["tickets"][0]["customer_type_name"]
     assert tickets[0].ticket_type_name == booking_post_data["tickets"][0]["ticket_type_name"]
+    assert tickets[0].price == fare_test_data.fares[0].price
+    assert tickets[0].currency_type == fare_test_data.fares[0].currency_type
 
 
 @pytest.mark.django_db
@@ -235,6 +235,7 @@ def test_create_booking_capacity_sales_required_for_outbound_and_inbound(
                 "ticket_type_id": fare_test_data.fares[0].api_id,
             }
         ],
+        "locale": "fi"
     }
 
     response = maas_api_client.post(ENDPOINT, post_data)
@@ -285,6 +286,7 @@ def test_confirm_booking(maas_api_client, requests_mock, snapshot, source_id_cha
     assert reserved_booking.status == Booking.Status.CONFIRMED
     assert reserved_booking.source_id == expected_source_id
     assert reserved_booking.transaction_id == "transactionID"
+    assert reserved_booking.booking_confirmed_at == timezone.now()
 
 
 @pytest.mark.django_db
