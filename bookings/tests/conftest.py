@@ -6,6 +6,7 @@ import pytest
 from model_bakery import baker, seq
 
 from gtfs.models import (
+    Agency,
     Departure,
     Fare,
     FareRiderCategory,
@@ -31,8 +32,14 @@ class FareTestData:
 def fare_test_data(maas_operator, api_id_generator):
     """Basically two routes, two fares, two rider_categories and two departures."""
     feed = get_feed_for_maas_operator(maas_operator, True)
+
+    agency = baker.make(
+        Agency,
+        name="Test agency"
+    )
     routes = baker.make(
         Route,
+        agency=agency,
         feed=feed,
         source_id=seq("source_id of route "),
         long_name="Name of route",
