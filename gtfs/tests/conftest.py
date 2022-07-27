@@ -1,39 +1,71 @@
 import itertools
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 from uuid import UUID
 
 import pytest
+from django.contrib.auth.models import User
 from model_bakery import baker, seq
 from rest_framework.test import APIClient
 
+from bookings.models import Booking
 from gtfs.models import Agency, Departure, Route, Stop, StopTime, Trip
 from gtfs.tests.utils import get_feed_for_maas_operator
-from maas.models import MaasOperator
+from maas.models import MaasOperator, TicketingSystem
 from maas.tests.utils import token_authenticate
 
 
 @pytest.fixture
-def maas_operator():
+def user1():
+    return baker.make(User, username='user1', _quantity=1)
+
+
+@pytest.fixture
+def maas_operator(user1):
     return baker.make(
         MaasOperator,
         name=seq("name of maas operator "),
         identifier=seq("identifier of maas operator "),
+        users=user1
     )
 
 
 @pytest.fixture
+def ticketing_system(user1):
+    return baker.make(
+        TicketingSystem,
+        name=seq("name of ticketing system "),
+        users=user1
+    )
+
+
+@pytest.fixture
+def booking(ticketing_system, maas_operator):
+    booking = baker.make(
+        Booking,
+        maas_operator=maas_operator,
+        agency_name="Test agency name",
+        ticketing_system=ticketing_system,
+    )
+    booking.created_at = datetime(2022, 7, 27, 0, 0)
+    booking.save()
+    return booking
+
+
+@pytest.fixture
 def second_maas_operator():
+    user = baker.make(User, username='user2', _quantity=1)
     return baker.make(
         MaasOperator,
         name=seq("name of maas operator 2"),
         identifier=seq("identifier of maas operator 2"),
+        users=user
     )
 
 
 @pytest.fixture
 def maas_api_client(maas_operator):
     api_client = APIClient()
-    token_authenticate(api_client, maas_operator.user)
+    token_authenticate(api_client, maas_operator.users.first())
     api_client.maas_operator = maas_operator
     return api_client
 

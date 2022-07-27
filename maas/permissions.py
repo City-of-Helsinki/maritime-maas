@@ -1,7 +1,5 @@
 from rest_framework import permissions
 
-from .models import MaasOperator
-
 
 class IsMaasOperator(permissions.BasePermission):
     def has_permission(self, request, view):
@@ -13,10 +11,7 @@ class IsMaasOperator(permissions.BasePermission):
         if not user.is_authenticated:
             return False
 
-        try:
-            user.maas_operator
+        if user.maas_operators.exists():
             return True
-        except MaasOperator.DoesNotExist:
-            pass
 
         return False

@@ -2,6 +2,7 @@ import logging
 
 from django.contrib import admin, messages
 from django.contrib.gis.admin import OSMGeoAdmin
+from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 from parler.admin import TranslatableAdmin
 from requests import RequestException
@@ -72,6 +73,15 @@ class FeedAdmin(admin.ModelAdmin):
         "trips",
         "departures",
     )
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        return qs.filter(
+            Q(ticketing_system__users=request.user)
+            | Q(ticketing_system__transport_service_providers__users=request.user)
+        )
 
     def last_import_successful(self, obj):
         return obj.last_import_successful

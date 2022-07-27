@@ -16,6 +16,9 @@ class BookingQueryset(models.QuerySet):
     def for_maas_operator(self, maas_operator: MaasOperator):
         return self.filter(maas_operator=maas_operator)
 
+    def for_maas_operators(self, maas_operator_ids):
+        return self.filter(maas_operator__id__in=maas_operator_ids)
+
     def create_reservation(
         self,
         maas_operator: MaasOperator,

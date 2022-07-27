@@ -63,10 +63,26 @@ def test_create_booking(
     assert booking.agency_name == fare_test_data.routes[0].agency.name
     tickets = booking.tickets.all()
     assert tickets.count() == len(booking_post_data["tickets"])
-    assert tickets[0].customer_type_name == booking_post_data["tickets"][0]["customer_type_name"]
-    assert tickets[0].ticket_type_name == booking_post_data["tickets"][0]["ticket_type_name"]
+    assert (
+        tickets[0].customer_type_name
+        == booking_post_data["tickets"][0]["customer_type_name"]
+    )
+    assert (
+        tickets[0].ticket_type_name
+        == booking_post_data["tickets"][0]["ticket_type_name"]
+    )
     assert tickets[0].price == fare_test_data.fares[0].price
     assert tickets[0].currency_type == fare_test_data.fares[0].currency_type
+
+
+@pytest.mark.django_db
+def test_booking_detail_list(
+    maas_api_client, booking, snapshot
+):
+    response = maas_api_client.get("/v1/booking/list/")
+    assert response.status_code == status.HTTP_200_OK
+    assert Booking.objects.count() == 1
+    snapshot.assert_match(json.loads(response.content))
 
 
 @pytest.mark.django_db
@@ -235,7 +251,7 @@ def test_create_booking_capacity_sales_required_for_outbound_and_inbound(
                 "ticket_type_id": fare_test_data.fares[0].api_id,
             }
         ],
-        "locale": "fi"
+        "locale": "fi",
     }
 
     response = maas_api_client.post(ENDPOINT, post_data)

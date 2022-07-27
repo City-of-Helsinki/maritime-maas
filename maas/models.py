@@ -14,15 +14,10 @@ class MaasOperator(models.Model):
             "operator in a ticketing system."
         ),
     )
-    user = models.OneToOneField(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.PROTECT,
-        related_name="maas_operator",
-        verbose_name=_("user"),
-    )
     transport_service_providers = models.ManyToManyField(
         "TransportServiceProvider", related_name="maas_operators", through="Permission"
     )
+    users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="maas_operators", verbose_name=_("users"))
 
     class Meta:
         verbose_name = _("maas operator")
@@ -41,6 +36,7 @@ class TransportServiceProvider(models.Model):
         blank=True,
         verbose_name=_("ticketing system"),
     )
+    users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="tsps", verbose_name=_("users"))
 
     class Meta:
         verbose_name = _("transport service provider")
@@ -78,6 +74,7 @@ class TicketingSystem(models.Model):
     availability_api_url = models.URLField(
         verbose_name=_("API availability endpoint URL"), blank=True
     )
+    users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="ticketing_systems", verbose_name=_("users"))
 
     class Meta:
         verbose_name = _("ticketing system")
