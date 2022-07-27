@@ -13,7 +13,7 @@ User = get_user_model()
 def test_test_maas_operator_permission(rf, is_maas_operator):
     permission_check = IsMaasOperator()
     if is_maas_operator:
-        user = baker.make(MaasOperator).user
+        user = baker.make(MaasOperator, make_m2m=True).users.first()
     else:
         user = baker.make(User)
 

@@ -3,7 +3,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
-from bookings.models import Booking
+from bookings.choices import BookingStatus
+from bookings.models import Booking, Ticket
 from gtfs.models import Departure, RiderCategory, Route
 
 
@@ -80,7 +81,9 @@ class BookingSerializer(PassthroughParametersSerializer, serializers.ModelSerial
 
     def validate_route_id(self, value):
         self.context["route"] = get_object_by_api_id(
-            Route.objects.for_maas_operator(self.context["request"].user.maas_operator),
+            Route.objects.for_maas_operator(
+                self.context["request"].user.maas_operators.first()
+            ),
             value,
         )
         return self.context["route"]
@@ -89,7 +92,7 @@ class BookingSerializer(PassthroughParametersSerializer, serializers.ModelSerial
         departures = [
             get_object_by_api_id(
                 Departure.objects.for_maas_operator(
-                    self.context["request"].user.maas_operator
+                    self.context["request"].user.maas_operators.first()
                 ),
                 departure_id,
             )
@@ -151,7 +154,7 @@ class BookingSerializer(PassthroughParametersSerializer, serializers.ModelSerial
 
     def create(self, validated_data):
         return Booking.objects.create_reservation(
-            self.context["request"].user.maas_operator,
+            self.context["request"].user.maas_operators.first(),
             self.validated_data["route"].feed.ticketing_system,
             ticket_data=validated_data,
         )

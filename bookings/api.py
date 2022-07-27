@@ -2,15 +2,20 @@ from collections import defaultdict
 
 from django.utils.translation import gettext_lazy as _
 from drf_spectacular.utils import extend_schema, extend_schema_view, inline_serializer
-from rest_framework import mixins, serializers
+from rest_framework import generics, mixins, serializers
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
 from bookings.models import Booking
-from bookings.serializers import BookingSerializer, PassthroughParametersSerializer
+from bookings.serializers import (
+    BookingSerializer,
+    PassthroughParametersSerializer,
+)
 from bookings.ticketing_system import TicketingSystemAPI
 from gtfs.models import Departure
+from maas.authentication import BearerTokenAuthentication
+from maas.permissions import IsMaasOperator
 
 
 class AvailabilityParamsSerializer(serializers.Serializer):
@@ -34,7 +39,9 @@ class BookingViewSet(
     lookup_field = "api_id"
 
     def get_queryset(self):
-        return Booking.objects.for_maas_operator(self.request.user.maas_operator)
+        return Booking.objects.for_maas_operator(
+            self.request.user.maas_operators.first()
+        )
 
     def retrieve(self, request, *args, **kwargs):
         booking = self.get_object()
@@ -81,7 +88,9 @@ class BookingViewSet(
         serializer.is_valid(raise_exception=True)
 
         departures = sorted(
-            Departure.objects.for_maas_operator(self.request.user.maas_operator)
+            Departure.objects.for_maas_operator(
+                self.request.user.maas_operators.first()
+            )
             .filter(api_id__in=serializer.validated_data["departure_ids"])
             .select_related("trip__feed__ticketing_system"),
             key=lambda x: serializer.validated_data["departure_ids"].index(x.api_id),
@@ -101,7 +110,7 @@ class BookingViewSet(
         for ticketing_system, ts_departures in departures_by_ticketing_system.items():
             availability_data.extend(
                 TicketingSystemAPI(
-                    maas_operator=self.request.user.maas_operator,
+                    maas_operator=self.request.user.maas_operators.first(),
                     ticketing_system=ticketing_system,
                 ).availability(ts_departures)
             )

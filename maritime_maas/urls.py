@@ -39,7 +39,7 @@ urlpatterns = [
         "v1/schema/redoc/",
         SpectacularRedocView.as_view(url_name="schema"),
         name="redoc",
-    ),
+    )
 ]
 
 

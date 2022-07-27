@@ -16,8 +16,8 @@ class BaseGTFSViewSet(viewsets.ReadOnlyModelViewSet):
         qs = super().get_queryset()
         if (
             self.request.user.is_authenticated
-            and hasattr(self.request.user, "maas_operator")
-            and (maas_operator := self.request.user.maas_operator)
+            and hasattr(self.request.user, "maas_operators")
+            and (maas_operator := self.request.user.maas_operators.filter(users=self.request.user).first())
         ):
             qs = qs.for_maas_operator(maas_operator)
         return qs
