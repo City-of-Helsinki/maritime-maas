@@ -16,6 +16,7 @@ from maas.models import MaasOperator
 from mock_ticket_api.utils import get_confirmations_data, get_reservation_data
 
 ENDPOINT = "/v1/bookings/"
+BOOKING_LIST_ENDPOINT = "/v1/booking/list/"
 
 
 @pytest.fixture
@@ -76,13 +77,19 @@ def test_create_booking(
 
 
 @pytest.mark.django_db
+@pytest.mark.parametrize("is_maas_operator", [True, False])
 def test_booking_detail_list(
-    maas_api_client, booking, snapshot
+    maas_api_client, maas_unauthenticated_api_client, booking, snapshot, is_maas_operator
 ):
-    response = maas_api_client.get("/v1/booking/list/")
-    assert response.status_code == status.HTTP_200_OK
-    assert Booking.objects.count() == 1
-    snapshot.assert_match(json.loads(response.content))
+    if is_maas_operator:
+        response = maas_api_client.get(BOOKING_LIST_ENDPOINT)
+        assert response.status_code == status.HTTP_200_OK
+        assert Booking.objects.count() == 1
+        snapshot.assert_match(json.loads(response.content))
+    else:
+        response = maas_unauthenticated_api_client.get(BOOKING_LIST_ENDPOINT)
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+        snapshot.assert_match(json.loads(response.content))
 
 
 @pytest.mark.django_db

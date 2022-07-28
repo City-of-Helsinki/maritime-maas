@@ -16,7 +16,7 @@ from maas.tests.utils import token_authenticate
 
 @pytest.fixture
 def user1():
-    return baker.make(User, username='user1', _quantity=1)
+    return baker.make(User, username="user1", _quantity=1)
 
 
 @pytest.fixture
@@ -25,18 +25,38 @@ def maas_operator(user1):
         MaasOperator,
         name=seq("name of maas operator "),
         identifier=seq("identifier of maas operator "),
-        users=user1
+        users=user1,
     )
 
 
 @pytest.fixture
+def ticketing_system(user1):
+    return baker.make(
+        TicketingSystem, name=seq("name of ticketing system "), users=user1
+    )
+
+
+@pytest.fixture
+def booking(ticketing_system, maas_operator):
+    booking = baker.make(
+        Booking,
+        maas_operator=maas_operator,
+        agency_name="Test agency name",
+        ticketing_system=ticketing_system,
+    )
+    booking.created_at = datetime(2022, 7, 27, 0, 0)
+    booking.save()
+    return booking
+
+
+@pytest.fixture
 def second_maas_operator():
-    user = baker.make(User, username='user2', _quantity=1)
+    user = baker.make(User, username="user2", _quantity=1)
     return baker.make(
         MaasOperator,
         name=seq("name of maas operator 2"),
         identifier=seq("identifier of maas operator 2"),
-        users=user
+        users=user,
     )
 
 

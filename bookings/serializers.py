@@ -185,3 +185,42 @@ class ApiAvailabilitySerializer(serializers.Serializer):
 
     trip_id = serializers.CharField(source="trip.source_id")
     date = serializers.DateField()
+
+
+class ApiTicketDetailSerializer(serializers.ModelSerializer):
+    customer_type_name = serializers.CharField()
+    ticket_type_name = serializers.CharField()
+    price = serializers.DecimalField(max_digits=10, decimal_places=2)
+
+    class Meta:
+        model = Ticket
+        fields = ("customer_type_name", "ticket_type_name", "price")
+
+
+class BookingDetailSerializer(serializers.ModelSerializer):
+    Status = BookingStatus
+    agency_name = serializers.CharField()
+    created_at = serializers.DateTimeField()
+    locale = serializers.ChoiceField(choices=settings.TICKET_LANGUAGES)
+    maas_operator_name = serializers.CharField(source="maas_operator.name")
+    route_capacity_sales = serializers.CharField()
+    route_name = serializers.CharField(max_length=255)
+    status = serializers.ChoiceField(choices=Status.choices)
+    tickets = ApiTicketDetailSerializer(required=False, many=True)
+    ticket_count = serializers.IntegerField()
+    ticket_system_name = serializers.CharField(source="ticketing_system.name")
+
+    class Meta:
+        model = Booking
+        fields = (
+            "agency_name",
+            "created_at",
+            "locale",
+            "maas_operator_name",
+            "route_capacity_sales",
+            "route_name",
+            "status",
+            "tickets",
+            "ticket_count",
+            "ticket_system_name",
+        )

@@ -7,7 +7,11 @@ from snapshottest import Snapshot
 
 snapshots = Snapshot()
 
-snapshots['test_booking_detail_list 1'] = [
+snapshots['test_booking_detail_list[False] 1'] = {
+    'detail': 'Autentikaatiotunnuksia ei annettu.'
+}
+
+snapshots['test_booking_detail_list[True] 1'] = [
     {
         'agency_name': 'Test agency name',
         'created_at': '2022-07-27T00:00:00+03:00',
