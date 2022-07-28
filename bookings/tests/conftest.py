@@ -1,4 +1,3 @@
-import datetime
 from dataclasses import dataclass
 from typing import List
 
@@ -104,7 +103,7 @@ def fare_test_data(maas_operator, api_id_generator):
         trip__source_id=seq("source_id of trip "),
         trip__route=iter(routes),
         api_id=api_id_generator,
-        date=datetime.date(2021, 4, 28),
+        date=date(2021, 4, 28),
         _quantity=2,
     )
 

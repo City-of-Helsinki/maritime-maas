@@ -85,11 +85,19 @@ def test_booking_detail_list(
         response = maas_api_client.get(BOOKING_LIST_ENDPOINT)
         assert response.status_code == status.HTTP_200_OK
         assert Booking.objects.count() == 1
+<<<<<<< HEAD
         snapshot.assert_match(json.loads(response.content))
     else:
         response = maas_unauthenticated_api_client.get(BOOKING_LIST_ENDPOINT)
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
         snapshot.assert_match(json.loads(response.content))
+=======
+    else:
+        response = maas_unauthenticated_api_client.get(BOOKING_LIST_ENDPOINT)
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    snapshot.assert_match(json.loads(response.content))
+>>>>>>> 07871c0 (added bookings api)
 
 
 @pytest.mark.django_db
