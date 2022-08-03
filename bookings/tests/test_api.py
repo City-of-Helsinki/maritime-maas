@@ -16,7 +16,7 @@ from maas.models import MaasOperator
 from mock_ticket_api.utils import get_confirmations_data, get_reservation_data
 
 ENDPOINT = "/v1/bookings/"
-BOOKING_LIST_ENDPOINT = "/v1/booking/list/"
+BOOKINGS_ENDPOINT = "/v1/open/bookings/"
 
 
 @pytest.fixture
@@ -82,22 +82,52 @@ def test_booking_detail_list(
     maas_api_client, maas_unauthenticated_api_client, booking, snapshot, is_maas_operator
 ):
     if is_maas_operator:
-        response = maas_api_client.get(BOOKING_LIST_ENDPOINT)
+        response = maas_api_client.get(BOOKINGS_ENDPOINT)
         assert response.status_code == status.HTTP_200_OK
         assert Booking.objects.count() == 1
-<<<<<<< HEAD
-        snapshot.assert_match(json.loads(response.content))
     else:
-        response = maas_unauthenticated_api_client.get(BOOKING_LIST_ENDPOINT)
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
-        snapshot.assert_match(json.loads(response.content))
-=======
-    else:
-        response = maas_unauthenticated_api_client.get(BOOKING_LIST_ENDPOINT)
+        response = maas_unauthenticated_api_client.get(BOOKINGS_ENDPOINT)
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     snapshot.assert_match(json.loads(response.content))
->>>>>>> 07871c0 (added bookings api)
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "filters_data ,expected",
+    [
+        ({'agency_name': 'Test agency name'}, 1),
+        ({'agency_name': 'TEST AGENCY NAME'}, 1),
+        ({'agency_name': 'unknown name'}, 0),
+        ({'locale': 'fi'}, 1),
+        ({'locale': 'FI'}, 1),
+        ({'locale': 'en'}, 0),
+        ({'locale': 'sv'}, 0),
+        ({'maas_operator_name': 'name of maas operator 1'}, 1),
+        ({'maas_operator_name': 'NAME OF MAAS OPERATOR 1'}, 1),
+        ({'maas_operator_name': 'unknown'}, 0),
+        ({'status': 'RESERVED'}, 1),
+        ({'status': 'reserved'}, 1),
+        ({'ticketing_system_name': 'name of ticketing system 1'}, 1),
+        ({'ticketing_system_name': 'NAME OF TICKETING SYSTEM 1'}, 1),
+        ({'ticketing_system_name': 'test'}, 0),
+        ({'route_name': ''}, 1),
+        ({'route_name': 'test'}, 0),
+        ({'start_date': '2022-7-27'}, 1),
+        ({'start_date': '2022-7-28'}, 0),
+        ({'end_date': '2022-7-27'}, 1),
+        ({'end_date': '2022-6-27'}, 0),
+        ({'start_date': '2022-7-27', 'end_date': '2022-7-28'}, 1),
+        ({'start_date': '2022-8-27', 'end_date': '2022-8-28'}, 0),
+        ({'agency_name': 'Test agency name', 'locale': 'fi', 'status': 'RESERVED'}, 1),
+        ({'agency_name': 'Test agency name', 'locale': 'en', 'status': 'RESERVED'}, 0),
+    ]
+)
+def test_booking_list_filters(booking, filters_data, expected, maas_api_client):
+    response = maas_api_client.get(BOOKINGS_ENDPOINT, filters_data)
+    print(filters_data)
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()) == expected
 
 
 @pytest.mark.django_db

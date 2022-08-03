@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 from typing import List
+from datetime import date
+
 
 import pytest
 from model_bakery import baker, seq

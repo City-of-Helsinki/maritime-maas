@@ -142,13 +142,13 @@ class BookingViewSet(
 
 
 class BookingFilter(filters.FilterSet):
-    start_date = filters.DateFilter(field_name="created_at", lookup_expr="date")
-    end_date = filters.DateFilter(field_name="created_at", lookup_expr="date")
+    start_date = filters.DateFilter(field_name="created_at", lookup_expr="date__gte")
+    end_date = filters.DateFilter(field_name="created_at", lookup_expr="date__lte")
     agency_name = filters.CharFilter(lookup_expr="iexact")
-    maas_operator__name = filters.CharFilter(
+    maas_operator_name = filters.CharFilter(
         field_name="maas_operator__name", lookup_expr="iexact"
     )
-    ticketing_system__name = filters.CharFilter(
+    ticketing_system_name = filters.CharFilter(
         field_name="ticketing_system__name", lookup_expr="iexact"
     )
     route_name = filters.CharFilter(field_name="route_name", lookup_expr="iexact")

@@ -40,7 +40,7 @@ urlpatterns = [
         SpectacularRedocView.as_view(url_name="schema"),
         name="redoc",
     ),
-    path("v1/booking/list/", BookingListView.as_view(), name="booking_list")
+    path("v1/open/bookings/", BookingListView.as_view(), name="bookings_list")
 ]
 
 
