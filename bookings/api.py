@@ -1,6 +1,7 @@
 from collections import defaultdict
 
 from django.utils.translation import gettext_lazy as _
+from django_filters import rest_framework as filters
 from drf_spectacular.utils import extend_schema, extend_schema_view, inline_serializer
 from rest_framework import generics, mixins, serializers
 from rest_framework.decorators import action
@@ -9,6 +10,7 @@ from rest_framework.viewsets import GenericViewSet
 
 from bookings.models import Booking
 from bookings.serializers import (
+    BookingDetailSerializer,
     BookingSerializer,
     PassthroughParametersSerializer,
 )
@@ -137,3 +139,44 @@ class BookingViewSet(
                 )
 
         return Response(result)
+
+
+class BookingFilter(filters.FilterSet):
+    start_date = filters.DateFilter(field_name="created_at", lookup_expr="date__gte")
+    end_date = filters.DateFilter(field_name="created_at", lookup_expr="date__lte")
+    agency_name = filters.CharFilter(lookup_expr="iexact")
+    maas_operator_name = filters.CharFilter(
+        field_name="maas_operator__name", lookup_expr="iexact"
+    )
+    ticketing_system_name = filters.CharFilter(
+        field_name="ticketing_system__name", lookup_expr="iexact"
+    )
+    route_name = filters.CharFilter(field_name="route_name", lookup_expr="iexact")
+    locale = filters.CharFilter(field_name="locale", lookup_expr="iexact")
+
+    class Meta:
+        model = Booking
+        fields = []
+
+
+class BookingListView(generics.ListAPIView):
+    authentication_classes = [BearerTokenAuthentication]
+    permission_classes = [IsMaasOperator]
+    queryset = Booking.objects.all()
+    serializer_class = BookingDetailSerializer
+    ordering_fields = [
+        "agency_name",
+        "maas_operator__name",
+        "route_name",
+        "locale",
+        "ticket_count",
+        "status",
+        "route_capacity_sales",
+    ]
+    ordering = ["-created_at"]
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_class = BookingFilter
+
+    def get_queryset(self):
+        maas_operators = self.request.user.maas_operators.values_list("id", flat=True)
+        return Booking.objects.for_maas_operators(maas_operators)

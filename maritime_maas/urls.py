@@ -10,7 +10,7 @@ from drf_spectacular.views import (
 )
 from rest_framework import routers
 
-from bookings.api import BookingViewSet
+from bookings.api import BookingViewSet, BookingListView
 from gtfs.api.routes import RoutesViewSet
 from gtfs.api.shapes import ShapeViewSet
 from gtfs.api.stops import StopViewSet
@@ -39,7 +39,8 @@ urlpatterns = [
         "v1/schema/redoc/",
         SpectacularRedocView.as_view(url_name="schema"),
         name="redoc",
-    )
+    ),
+    path("v1/open/bookings/", BookingListView.as_view(), name="bookings_list")
 ]
 
 
