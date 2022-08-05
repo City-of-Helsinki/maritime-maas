@@ -1,10 +1,16 @@
 from django.contrib import admin
 
-from .models import Booking
+from .models import Booking, Ticket
+
+
+class TicketInline(admin.TabularInline):
+    model = Ticket
+    extra = 0
 
 
 @admin.register(Booking)
 class BookingAdmin(admin.ModelAdmin):
+    inlines = (TicketInline,)
     list_display = (
         "api_id",
         "maas_operator",
