@@ -41,8 +41,8 @@ class BookingViewSet(
     lookup_field = "api_id"
 
     def get_queryset(self):
-        return Booking.objects.for_maas_operator(
-            self.request.user.maas_operators.first()
+        return Booking.objects.for_maas_operators(
+            [self.request.user.maas_operators.first().id]
         )
 
     def retrieve(self, request, *args, **kwargs):
