@@ -37,7 +37,7 @@ class BookingQueryset(models.QuerySet):
             route_name=route_name,
             ticket_count=ticket_count,
             transaction_id=transaction_id,
-            locale=ticket_data["locale"],
+            locale=ticket_data.get('locale', LocaleChoices.FINNISH),
             route_capacity_sales=Route.CapacitySales(ticket_data['route'].capacity_sales).label,
             agency_name=ticket_data["route"].agency.name,
         )
