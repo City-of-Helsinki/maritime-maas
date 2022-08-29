@@ -1,0 +1,73 @@
+[
+  {
+    "model": "auth.group",
+    "pk": 1,
+    "fields": {
+      "name": "Maas operators",
+      "permissions": [
+        16,
+        108,
+        86,
+        87,
+        88,
+        95,
+        96
+      ]
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 2,
+    "fields": {
+      "name": "TSP users",
+      "permissions": [
+        108,
+        44,
+        80,
+        95,
+        96,
+        89,
+        90,
+        91,
+        92
+      ]
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 3,
+    "fields": {
+      "name": "Ticketing system users",
+      "permissions": [
+        105,
+        106,
+        107,
+        108,
+        41,
+        42,
+        43,
+        44,
+        98,
+        99,
+        100
+      ]
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 4,
+    "fields": {
+      "name": "Basic permissions",
+      "permissions": [
+        8,
+        14,
+        16,
+        25,
+        26,
+        27,
+        28,
+        104
+      ]
+    }
+  }
+]

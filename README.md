@@ -29,6 +29,9 @@ Prerequisites:
 2. Create superuser:
     * Taken care by the example env
     * `docker exec -it maritime-maas-backend python manage.py add_admin_user`
+    
+3. Load groups fixtures (later users can belong to respective group to access user specific data)
+    `python manage.py loaddata utils/fixtures/groups.json`
 
 
 ## Development without Docker
