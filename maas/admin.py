@@ -118,3 +118,7 @@ class CustomTokenAdmin(TokenAdmin):
 
 admin.site.unregister(TokenProxy)
 admin.site.register(TokenProxy, CustomTokenAdmin)
+
+admin.site.site_header = "Maritime MaaS Admin"
+admin.site.site_title = "Maritime MaaS Admin Interface"
+admin.site.index_title = "Maritime MaaS Admin Interface"
