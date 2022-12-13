@@ -6,6 +6,10 @@ stages:
   - deploy
 
 variables:
+  DOCKER_HOST: tcp://docker:2376
+  DOCKER_TLS_CERTDIR: "/certs"
+  DOCKER_TLS_VERIFY: 1
+  DOCKER_CERT_PATH: "$DOCKER_TLS_CERTDIR/client"
   IMAGE_RELEASE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA-$CI_PIPELINE_ID
   IMAGE_TEST_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA-$CI_PIPELINE_ID-test
   CACHE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG-cache
@@ -32,7 +36,7 @@ workflow:
 ## Common CI/CD targets used with extends keyword
 .build_image_base:
   stage: build
-  image: docker:20.10.6
+  image: docker:20.10.16
   services:
     - docker:20.10.6-dind
   variables:
@@ -44,7 +48,7 @@ workflow:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
   script:
     #  defaults: --build-arg REQUIREMENTS=requirements_prod.txt
-    - 'eval docker pull $CACHE_TAG || true'
+    #- 'eval docker pull $CACHE_TAG || true'
     - 'eval docker build --build-arg APP_IMG_VER=$APP_IMG_VER $BUILD_EXTRA_ARGS --cache-from $CACHE_TAG --tag $IMAGE_TAG --tag $CACHE_TAG .'
     - 'eval docker push $IMAGE_TAG'
     - 'eval docker push $CACHE_TAG'
@@ -54,7 +58,7 @@ workflow:
   stage: test
   image: docker:20.10.6
   services:
-    - docker:20.10.6-dind
+    - docker:20.10.16-dind
   before_script:
     - set -x
     - env
