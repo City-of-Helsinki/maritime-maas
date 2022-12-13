@@ -49,7 +49,7 @@ workflow:
   script:
     #  defaults: --build-arg REQUIREMENTS=requirements_prod.txt
     #- 'eval docker pull $CACHE_TAG || true'
-    - 'eval docker build --build-arg APP_IMG_VER=$APP_IMG_VER $BUILD_EXTRA_ARGS --cache-from $CACHE_TAG --tag $IMAGE_TAG --tag $CACHE_TAG .'
+    - 'eval docker build --network host --build-arg APP_IMG_VER=$APP_IMG_VER $BUILD_EXTRA_ARGS --cache-from $CACHE_TAG --tag $IMAGE_TAG --tag $CACHE_TAG .'
     - 'eval docker push $IMAGE_TAG'
     - 'eval docker push $CACHE_TAG'
 
