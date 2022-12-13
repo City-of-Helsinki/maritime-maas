@@ -41,7 +41,7 @@ workflow:
     - docker:20.10.6-dind
   variables:
     IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA-$CI_PIPELINE_ID
-    CACHE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG-cache
+    CACHE_TAG: $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_SLUG}-cache
   before_script:
     - set -x
     - env
@@ -49,9 +49,15 @@ workflow:
   script:
     #  defaults: --build-arg REQUIREMENTS=requirements_prod.txt
     #- 'eval docker pull $CACHE_TAG || true'
-    - 'eval docker build --network host --build-arg APP_IMG_VER=$APP_IMG_VER $BUILD_EXTRA_ARGS --cache-from $CACHE_TAG --tag $IMAGE_TAG --tag $CACHE_TAG .'
-    - 'eval docker push $IMAGE_TAG'
-    - 'eval docker push $CACHE_TAG'
+    - >
+      docker build
+      --network host
+      --build-arg APP_IMG_VER=$APP_IMG_VER $BUILD_EXTRA_ARGS
+      --cache-from $CACHE_TAG
+      --tag $IMAGE_TAG
+      --tag $CACHE_TAG .
+    - docker push $IMAGE_TAG
+    - docker push $CACHE_TAG
 
 
 .test_image_base:
