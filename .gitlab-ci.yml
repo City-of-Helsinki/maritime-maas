@@ -45,7 +45,7 @@ workflow:
   before_script:
     - set -x
     - env
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN mcr.gitlab.montel.fi
   script:
     #  defaults: --build-arg REQUIREMENTS=requirements_prod.txt
     #- 'eval docker pull $CACHE_TAG || true'
@@ -62,7 +62,7 @@ workflow:
   before_script:
     - set -x
     - env
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN mcr.gitlab.montel.fi
     - apk add docker-compose
   script:
     - 'eval export TEST_IMG=$IMAGE_TEST_TAG'
