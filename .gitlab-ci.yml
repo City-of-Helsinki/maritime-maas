@@ -37,9 +37,9 @@ workflow:
 ## Common CI/CD targets used with extends keyword
 .build_image_base:
   stage: build
-  image: docker:20.10.16
+  image: docker:20.10.21
   services:
-    - docker:20.10.6-dind
+    - docker:20.10.21-dind
   variables:
     IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA-$CI_PIPELINE_ID
     CACHE_TAG: $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_SLUG}-cache
@@ -63,9 +63,9 @@ workflow:
 
 .test_image_base:
   stage: test
-  image: docker:20.10.6
+  image: docker:20.10.21
   services:
-    - docker:20.10.16-dind
+    - docker:20.10.21-dind
   before_script:
     - set -x
     - env
