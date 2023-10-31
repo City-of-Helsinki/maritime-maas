@@ -1,5 +1,5 @@
 # ==============================
-FROM helsinkitest/python:3.8-slim as appbase
+FROM helsinkitest/python:3.9-slim as appbase
 # ==============================
 RUN mkdir /entrypoint
 
@@ -9,7 +9,7 @@ COPY --chown=appuser:appuser requirements-prod.txt /app/requirements-prod.txt
 RUN apt-install.sh \
     build-essential \
     libpq-dev \
-    netcat \
+    netcat-traditional \
     gdal-bin \
     python3-gdal \
     && pip install -U pip \

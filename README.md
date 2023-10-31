@@ -38,7 +38,7 @@ Prerequisites:
 
 Prerequisites:
 * PostgreSQL 11
-* Python 3.8
+* Python 3.9
 
 
 ### Installing Python requirements
@@ -113,11 +113,3 @@ commit.
 
 * Set the `DEBUG` environment variable to `1`.
 * Run `pytest`.
-
-## Demo frontend
-Navigate to frontend folder.  
-
-To install `node_modules` run `yarn install`.  
-Create `.env` file, use `.env.example` as a base.
-
-After installation is completed run application with `yarn start`. Application is now running and can be found at `localhost:3000`.

@@ -1,4 +1,4 @@
-Django
+Django~=3.2.22
 django-environ
 psycopg2
 sentry_sdk
